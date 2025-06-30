@@ -1,0 +1,27 @@
+def connect_decoder(transfer_values):
+    # Map the transfer-values so the dimensionality matches
+    # the internal state of the GRU layers. This means
+    # we can use the mapped transfer-values as the initial state
+    # of the GRU layers.
+    initial_state = decoder_transfer_map(transfer_values)
+
+    # Start the decoder-network with its input-layer.
+    net = decoder_input
+    
+    # Connect the embedding-layer.
+    net = decoder_embedding(net)
+    
+    # Connect all the GRU layers.
+    net = decoder_gru1(net, initial_state=initial_state)
+    net = decoder_gru2(net, initial_state=initial_state)
+    net = decoder_gru3(net, initial_state=initial_state)
+
+    # Connect the final dense layer that converts to
+    # one-hot encoded arrays.
+    decoder_output = decoder_dense(net)
+    
+    return decoder_output
+decoder_output = connect_decoder(transfer_values=transfer_values_input)
+
+decoder_model = Model(inputs=[transfer_values_input, decoder_input],
+                      outputs=[decoder_output])

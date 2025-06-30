@@ -1,0 +1,20 @@
+state_size = 512
+embedding_size = 128
+transfer_values_input = Input(shape=(transfer_values_size,),
+                              name='transfer_values_input')
+decoder_transfer_map = Dense(state_size,
+                             activation='tanh',
+                             name='decoder_transfer_map')
+decoder_input = Input(shape=(None, ), name='decoder_input')
+decoder_embedding = Embedding(input_dim=num_words,
+                              output_dim=embedding_size,
+                              name='decoder_embedding')
+decoder_gru1 = GRU(state_size, name='decoder_gru1',
+                   return_sequences=True)
+decoder_gru2 = GRU(state_size, name='decoder_gru2',
+                   return_sequences=True)
+decoder_gru3 = GRU(state_size, name='decoder_gru3',
+                   return_sequences=True)
+decoder_dense = Dense(num_words,
+                      activation='softmax',
+                      name='decoder_output')

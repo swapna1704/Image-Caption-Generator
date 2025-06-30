@@ -1,0 +1,20 @@
+decoder_model.compile(optimizer=RMSprop(lr=1e-3),
+                      loss='sparse_categorical_crossentropy')
+path_checkpoint = '22_checkpoint.keras'
+callback_checkpoint = ModelCheckpoint(filepath=path_checkpoint,
+                                      verbose=1,
+                                      save_weights_only=True)
+callback_tensorboard = TensorBoard(log_dir='./22_logs/',
+                                   histogram_freq=0,
+                                   write_graph=False)
+callbacks = [callback_checkpoint, callback_tensorboard]
+try:
+    decoder_model.load_weights(path_checkpoint)
+except Exception as error:
+    print("Error trying to load checkpoint.")
+    print(error)
+%%time
+decoder_model.fit(x=generator,
+                  steps_per_epoch=steps_per_epoch,
+                  epochs=20,
+                  callbacks=callbacks)

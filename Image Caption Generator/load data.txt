@@ -1,0 +1,59 @@
+import coco
+# coco.set_data_dir("data/coco/")
+coco.maybe_download_and_extract()
+_, filenames_train, captions_train = coco.load_records(train=True)
+num_images_train = len(filenames_train)
+num_images_train
+_, filenames_val, captions_val = coco.load_records(train=False)
+def load_image(path, size=None):
+    """
+    Load the image from the given file-path and resize it
+    to the given size if not None.
+    """
+
+    # Load the image using PIL.
+    img = Image.open(path)
+
+    # Resize image if desired.
+    if not size is None:
+        img = img.resize(size=size, resample=Image.LANCZOS)
+
+    # Convert image to numpy array.
+    img = np.array(img)
+
+    # Scale image-pixels so they fall between 0.0 and 1.0
+    img = img / 255.0
+
+    # Convert 2-dim gray-scale array to 3-dim RGB array.
+    if (len(img.shape) == 2):
+        img = np.repeat(img[:, :, np.newaxis], 3, axis=2)
+
+    return img
+def show_image(idx, train):
+    """
+    Load and plot an image from the training- or validation-set
+    with the given index.
+    """
+
+    if train:
+        # Use an image from the training-set.
+        dir = coco.train_dir
+        filename = filenames_train[idx]
+        captions = captions_train[idx]
+    else:
+        # Use an image from the validation-set.
+        dir = coco.val_dir
+        filename = filenames_val[idx]
+        captions = captions_val[idx]
+
+    # Path for the image-file.
+    path = os.path.join(dir, filename)
+
+    # Print the captions for this image.
+    for caption in captions:
+        print(caption)
+    
+    # Load the image and plot it.
+    img = load_image(path)
+    plt.imshow(img)
+    plt.show()
